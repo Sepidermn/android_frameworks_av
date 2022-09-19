@@ -169,12 +169,10 @@ CameraManagerGlobal::~CameraManagerGlobal() {
     Mutex::Autolock _sl(sLock);
     Mutex::Autolock _l(mLock);
     if (mCameraService != nullptr) {
-        AIBinder_unlinkToDeath(mCameraService->asBinder().get(),
-                               mDeathRecipient.get(), this);
+        mCameraService->unlinkToDeath(mDeathNotifier);
         auto stat = mCameraService->removeListener(mCameraServiceListener);
         if (!stat.isOk()) {
-            ALOGE("Failed to remove listener to camera service %d:%d", stat.getExceptionCode(),
-                  stat.getServiceSpecificError());
+            ALOGE("Failed to remove listener to camera service %s", stat.description().c_str());
         }
     }
 
